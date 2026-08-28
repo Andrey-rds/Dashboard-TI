@@ -1,0 +1,109 @@
+{
+  "painel_titulo": "RDS Multimidia",
+  "painel_subtitulo": "Painel corporativo & operação",
+  "kpis": [
+    {
+      "titulo": "Chamados resolvidos",
+      "valor": 10,
+      "font_card": "times...",
+      "cor_texto_valor": "#FF0000",
+      "cor_texto_titulo": "#FFFFFF"
+    },
+    {
+      "titulo": "SLA Atendimento",
+      "valor": "50%",
+      "font_card": "times...",
+      "cor_texto_valor": "#FF0000",
+      "cor_texto_titulo": "#FFFFFF"
+    },
+    {
+      "titulo": "Chamados resolvidos",
+      "valor": 10,
+      "font_card": "times...",
+      "cor_texto_valor": "#FF0000",
+      "cor_texto_titulo": "#FFFFFF"
+    }
+  ],
+  "lista_esquerda": [
+    {
+      "titulo_lista": "PRODUTIVIDADE SEMANA",
+      "cabecalho": {
+        "coluna1": "N° TAREFA",
+        "coluna2": "REDE",
+        "coluna3": "STATUS",
+        "coluna4": "DEPARTAMENTO",
+        "coluna5": "PRIORIDADE",
+        "coluna6": "SOLUÇÃO",
+        "coluna7": "TAREFA"
+      },
+      "linhas": [
+        {
+          "celula1": 10,
+          "celula2": "CARREFOUR",
+          "celula3": "EM EXECUÇÃO",
+          "celula4": "TI",
+          "celula5": "ALTA",
+          "celula6": "RADIO LOCUTOR",
+          "celula7": "Cadastrar a planilha de produtos"
+        },
+        {
+          "celula1": 11,
+          "celula2": "CARREFOUR",
+          "celula3": "PENDENTE",
+          "celula4": "TI",
+          "celula5": "BAIXA",
+          "celula6": "Radio Locutor",
+          "celula7": "Configurar a rede do Atacadão"
+        },
+        {
+          "celula1": 12,
+          "celula2": "COOP",
+          "celula3": "Em andamento",
+          "celula4": "Rádio",
+          "celula5": "Erro no spot",
+          "celula6": "Radio Indoor",
+          "celula7": "Bug na tela tal..."
+        }
+      ]
+    }
+  ],
+  "lista_direita": [
+    {
+      "titulo_lista": "CHAMADOS RECENTES",
+      "cabecalho": {
+        "coluna1": "N° O.S.",
+        "coluna2": "REDE",
+        "coluna3": "STATUS",
+        "coluna4": "DEPARTAMENTO",
+        "coluna5": "CATEGORIA",
+        "coluna6": "SOLUÇÃO"
+      },
+      "linhas": [
+        {
+          "celula1": 1,
+          "celula2": "CARREFOUR",
+          "celula3": "Pendente",
+          "celula4": "TI",
+          "celula5": "Trocar senha",
+          "celula6": "Radio Locutor"
+        },
+        {
+          "celula1": 2,
+          "celula2": "CARREFOUR",
+          "celula3": "Pendente",
+          "celula4": "TI",
+          "celula5": "Novo produto",
+          "celula6": "Radio Locutor"
+        },
+        {
+          "celula1": 3,
+          "celula2": "COOP",
+          "celula3": "Em andamento",
+          "celula4": "Rádio",
+          "celula5": "Erro no spot",
+          "celula6": "Radio Indoor"
+        }
+      ]
+    }
+  ]
+}

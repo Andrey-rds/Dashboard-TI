@@ -1,0 +1,19 @@
+version: '2.1'
+
+services:
+  web:
+    build: .
+    restart: always
+    network_mode: host
+
+  browser:
+    image: balenablocks/browser
+    restart: always
+    privileged: true
+    network_mode: host
+    environment:
+      LAUNCH_URL: "http://127.0.0.1:3000"
+      KIOSK: "1"
+      SHOW_CURSOR: "0"
+      ENABLE_GPU: "1"
+      WINDOW_SIZE: "1920,1080"
