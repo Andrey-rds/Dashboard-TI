@@ -105,5 +105,25 @@
         }
       ]
     }
-  ]
+  ],
+  "graficos": {
+    "fluxo_operacional": {
+      "titulo_grafico": "FLUXO OPERACIONAL DIÁRIO",
+      "labels": ["08h", "10h", "12h", "14h", "16h", "18h", "20h"],
+      "chamados_resolvidos": [2, 5, 8, 10, 6, 4, 1],
+      "chamados_abertos": [3, 7, 12, 10, 8, 5, 2]
+    },
+    "distribuicao_chamados": {
+      "titulo_grafico": "DISTRIBUIÇÃO DE CHAMADOS",
+      "labels": ["Chamados em Aberto", "Chamados Resolvidos", "Chamados Pendentes"],
+      "valores": [10, 10, 5]
+    },
+    "analise_por_loja": {
+      "titulo_grafico": "ANÁLISE DE CHAMADOS POR LOJA",
+      "labels": ["LASA", "ATACADAO", "COOP", "CARREFOUR", "ROLDAO", "MAMBO", "PANVEL", "SAVEGNAGO", "LOJAS G."],
+      "total_os": [15, 12, 8, 14, 6, 5, 9, 7, 11],
+      "resolvidos": [10, 8, 6, 10, 4, 3, 7, 5, 8],
+      "pendentes": [5, 4, 2, 4, 2, 2, 2, 2, 3]
+    }
+  }
 }
