@@ -3,24 +3,24 @@
   "painel_subtitulo": "Painel corporativo & operação",
   "kpis": [
     {
-      "titulo": "Chamados resolvidos",
+      "titulo": "CHAMADOS RESOLVIDOS",
       "valor": 10,
       "font_card": "times...",
-      "cor_texto_valor": "#FF0000",
+      "cor_texto_valor": "#FFFFFF",
       "cor_texto_titulo": "#FFFFFF"
     },
     {
-      "titulo": "SLA Atendimento",
+      "titulo": "SLA ATENDIMENTO",
       "valor": "50%",
       "font_card": "times...",
-      "cor_texto_valor": "#FF0000",
+      "cor_texto_valor": "#FFFFFF",
       "cor_texto_titulo": "#FFFFFF"
     },
     {
-      "titulo": "Chamados resolvidos",
+      "titulo": "CHAMADOS EM ABERTO",
       "valor": 10,
       "font_card": "times...",
-      "cor_texto_valor": "#FF0000",
+      "cor_texto_valor": "#FFFFFF",
       "cor_texto_titulo": "#FFFFFF"
     }
   ],

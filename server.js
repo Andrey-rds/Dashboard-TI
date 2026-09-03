@@ -5,48 +5,61 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 
 const publicPath = path.resolve(__dirname, 'app', 'public');
 
-// Servir arquivos estáticos (HTML, CSS, JS e JSON)
+// 1. Servir arquivos estáticos FIRST (css, js, imagens, json)
+
 app.use(express.static(publicPath));
 
-// ==============================
-// ROTA EXPLICITA PARA O DADOS_PAINEL.JSON
-// ==============================
+app.use('/js', express.static(path.join(publicPath, 'js')));
+
+// 2. Rota explícita para o JSON
+
 app.get('/dados_painel.json', (req, res) => {
+
   const jsonFilePath = path.join(publicPath, 'dados_painel.json');
 
   fs.readFile(jsonFilePath, 'utf8', (err, data) => {
+
     if (err) {
-      console.error('Erro de leitura no server.js:', err);
-      return res.status(404).json({ error: 'Arquivo JSON não encontrado no servidor' });
+
+      console.error('Erro de leitura do JSON:', err);
+
+      return res.status(404).json({
+        error: 'Arquivo JSON não encontrado'
+      });
+
     }
-    
-    // Força o Chromium a nunca armazenar resposta antiga em cache
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
-    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+
+    res.setHeader(
+      'Cache-Control',
+      'no-store, no-cache, must-revalidate'
+    );
+
+    res.setHeader(
+      'Content-Type',
+      'application/json; charset=utf-8'
+    );
+
     res.status(200).send(data);
+
   });
+
 });
 
-app.get('/api/dashboard', (req, res) => {
-  res.redirect('/dados_painel.json');
-});
+// 3. Fallback apenas para rotas desconhecidas (HTML)
 
-// ==============================
-// PÁGINA PRINCIPAL (Última Rota)
-// ==============================
 app.get('*', (req, res) => {
+
   res.sendFile(path.join(publicPath, 'index.html'));
+
 });
 
-// ==============================
-// INICIALIZAÇÃO
-// ==============================
 app.listen(PORT, '0.0.0.0', () => {
+
   console.log(`Servidor rodando na porta ${PORT}`);
+
 });

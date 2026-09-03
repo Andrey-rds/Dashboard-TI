@@ -27,7 +27,7 @@ async function fetchDashboardData() {
     const elSubtitulo = document.getElementById('painel-subtitulo');
     if (elSubtitulo && data.painel_subtitulo) elSubtitulo.innerText = data.painel_subtitulo;
 
-    // 2. Preenchimento Dinâmico dos KPIs (Garante 100% o uso do CSS/Tailwind)
+    // 2. Preenchimento Dinâmico dos KPIs
     if (Array.isArray(data.kpis)) {
       data.kpis.forEach((kpi, index) => {
         const elValor = document.getElementById(`kpi-valor-${index}`);
@@ -35,17 +35,17 @@ async function fetchDashboardData() {
 
         if (elValor) {
           elValor.innerText = kpi.valor ?? '--';
-          elValor.style.color = ''; // Remove a injeção da cor inline
+          elValor.style.color = '';
         }
 
         if (elTituloKpi) {
           elTituloKpi.innerText = kpi.titulo ?? '';
-          elTituloKpi.style.color = ''; // Remove a injeção da cor inline
+          elTituloKpi.style.color = '';
         }
       });
     }
 
-    // 3. Tabela Esquerda (Produtividade da Semana)
+    // 3. Tabela Esquerda (Produtividade)
     if (Array.isArray(data.lista_esquerda) && data.lista_esquerda.length > 0) {
       const configEsq = data.lista_esquerda[0];
 
@@ -58,7 +58,7 @@ async function fetchDashboardData() {
         const trCabecalhoEsq = document.getElementById('cabecalho-lista-esquerda');
         if (trCabecalhoEsq) {
           trCabecalhoEsq.innerHTML = Object.values(configEsq.cabecalho)
-            .map(col => `<th class="p-3 font-semibold">${col}</th>`)
+            .map(col => `<th class="py-2 px-2 font-bold text-xs text-slate-400 uppercase tracking-wider">${col}</th>`)
             .join('');
         }
       }
@@ -67,17 +67,17 @@ async function fetchDashboardData() {
       if (tbodyEsq && Array.isArray(configEsq.linhas)) {
         tbodyEsq.innerHTML = configEsq.linhas.map(linha => `
           <tr class="hover:bg-slate-800/40 transition-colors">
-            <td class="p-3 text-base font-bold text-slate-100">${linha.celula1 ?? ''}</td>
-            <td class="p-3 text-base text-slate-200">${linha.celula2 ?? ''}</td>
-            <td class="p-3 text-base">
-              <span class="px-3 py-1 rounded-md text-sm font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 whitespace-nowrap inline-block text-center">
+            <td class="py-2 px-2 text-base font-black text-white">${linha.celula1 ?? ''}</td>
+            <td class="py-2 px-2 text-sm font-bold text-slate-100 uppercase">${linha.celula2 ?? ''}</td>
+            <td class="py-2 px-2 text-xs">
+              <span class="px-2 py-0.5 rounded text-xs font-black bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 whitespace-nowrap inline-block text-center uppercase tracking-wider">
                 ${linha.celula3 ?? ''}
               </span>
             </td>
-            <td class="p-3 text-base text-slate-200">${linha.celula4 ?? ''}</td>
-            <td class="p-3 text-base text-slate-200">${linha.celula5 ?? ''}</td>
-            <td class="p-3 text-base text-slate-200">${linha.celula6 ?? ''}</td>
-            <td class="p-3 text-base text-slate-200 truncate max-w-[220px]">${linha.celula7 ?? ''}</td>
+            <td class="py-2 px-2 text-sm font-semibold text-slate-300">${linha.celula4 ?? ''}</td>
+            <td class="py-2 px-2 text-sm font-bold text-slate-200 uppercase">${linha.celula5 ?? ''}</td>
+            <td class="py-2 px-2 text-sm font-medium text-slate-300">${linha.celula6 ?? ''}</td>
+            <td class="py-2 px-2 text-sm font-medium text-slate-200 truncate max-w-[200px]">${linha.celula7 ?? ''}</td>
           </tr>
         `).join('');
       }
@@ -96,7 +96,7 @@ async function fetchDashboardData() {
         const trCabecalhoDir = document.getElementById('cabecalho-lista-direita');
         if (trCabecalhoDir) {
           trCabecalhoDir.innerHTML = Object.values(configDir.cabecalho)
-            .map(col => `<th class="p-3 font-semibold">${col}</th>`)
+            .map(col => `<th class="py-2 px-2 font-bold text-xs text-slate-400 uppercase tracking-wider">${col}</th>`)
             .join('');
         }
       }
@@ -105,16 +105,16 @@ async function fetchDashboardData() {
       if (tbodyDir && Array.isArray(configDir.linhas)) {
         tbodyDir.innerHTML = configDir.linhas.map(linha => `
           <tr class="hover:bg-slate-800/40 transition-colors">
-            <td class="p-3 text-base font-bold text-slate-100">${linha.celula1 ?? ''}</td>
-            <td class="p-3 text-base text-slate-200">${linha.celula2 ?? ''}</td>
-            <td class="p-3 text-base">
-              <span class="px-3 py-1 rounded-md text-sm font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30 whitespace-nowrap inline-block text-center">
+            <td class="py-2 px-2 text-base font-black text-white">${linha.celula1 ?? ''}</td>
+            <td class="py-2 px-2 text-sm font-bold text-slate-100 uppercase">${linha.celula2 ?? ''}</td>
+            <td class="py-2 px-2 text-xs">
+              <span class="px-2 py-0.5 rounded text-xs font-black bg-amber-500/20 text-amber-300 border border-amber-500/40 whitespace-nowrap inline-block text-center uppercase tracking-wider">
                 ${linha.celula3 ?? ''}
               </span>
             </td>
-            <td class="p-3 text-base text-slate-200">${linha.celula4 ?? ''}</td>
-            <td class="p-3 text-base text-slate-200">${linha.celula5 ?? ''}</td>
-            <td class="p-3 text-base text-slate-200">${linha.celula6 ?? ''}</td>
+            <td class="py-2 px-2 text-sm font-semibold text-slate-300">${linha.celula4 ?? ''}</td>
+            <td class="py-2 px-2 text-sm font-medium text-slate-300">${linha.celula5 ?? ''}</td>
+            <td class="py-2 px-2 text-sm font-medium text-slate-300">${linha.celula6 ?? ''}</td>
           </tr>
         `).join('');
       }
@@ -128,6 +128,5 @@ async function fetchDashboardData() {
   }
 }
 
-// Execução imediata e retentativa a cada 5 segundos
 fetchDashboardData();
 setInterval(fetchDashboardData, 5000);

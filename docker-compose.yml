@@ -16,4 +16,6 @@ services:
       KIOSK: "1"
       SHOW_CURSOR: "0"
       ENABLE_GPU: "1"
-      WINDOW_SIZE: "1920,1080"
+      FLAGS: "--window-size=1920,1080 --disable-translate --disable-features=Translate,TranslateUI --lang=pt-BR --accept-lang=pt-BR,pt,en-US,en --noerrdialogs --disable-session-crashed-bubble --no-first-run --disable-pings --check-for-update-interval=31536000"
+      
+  
