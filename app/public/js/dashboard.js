@@ -1,7 +1,7 @@
-// Relógio em tempo real
+// Relógio em tempo real (horário de Brasília — o container roda em UTC)
 function updateClock() {
   const now = new Date();
-  const timeString = now.toLocaleTimeString('pt-BR');
+  const timeString = now.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' });
   const clockElement = document.getElementById('clock');
   if (clockElement) clockElement.innerText = timeString;
 }
@@ -19,6 +19,17 @@ async function fetchDashboardData() {
     }
 
     const data = await response.json();
+
+    // O JSON enviado pelo hub traz as tabelas em cards.card[] (tipo_card "tabela").
+    // O layout tem duas tabelas fixas: usamos a 1a e a 2a tabela do array.
+    // Se vier no formato antigo (lista_esquerda/lista_direita), ele continua valendo.
+    const tabelas = Array.isArray(data.cards && data.cards.card)
+      ? data.cards.card.filter(c => c && (c.tipo_card === 'tabela' || (c.cabecalho && c.linhas)))
+      : [];
+    const listaEsquerda = Array.isArray(data.lista_esquerda) ? data.lista_esquerda
+      : (tabelas[0] ? [tabelas[0]] : []);
+    const listaDireita = Array.isArray(data.lista_direita) ? data.lista_direita
+      : (tabelas[1] ? [tabelas[1]] : []);
 
     // 1. Títulos Principais
     const elTitulo = document.getElementById('painel-titulo');
@@ -46,8 +57,8 @@ async function fetchDashboardData() {
     }
 
     // 3. Tabela Esquerda (Produtividade)
-    if (Array.isArray(data.lista_esquerda) && data.lista_esquerda.length > 0) {
-      const configEsq = data.lista_esquerda[0];
+    if (listaEsquerda.length > 0) {
+      const configEsq = listaEsquerda[0];
 
       const elTituloEsq = document.getElementById('titulo-lista-esquerda');
       if (elTituloEsq && configEsq.titulo_lista) {
@@ -84,8 +95,8 @@ async function fetchDashboardData() {
     }
 
     // 4. Tabela Direita (Chamados Recentes)
-    if (Array.isArray(data.lista_direita) && data.lista_direita.length > 0) {
-      const configDir = data.lista_direita[0];
+    if (listaDireita.length > 0) {
+      const configDir = listaDireita[0];
 
       const elTituloDir = document.getElementById('titulo-lista-direita');
       if (elTituloDir && configDir.titulo_lista) {
@@ -128,5 +139,24 @@ async function fetchDashboardData() {
   }
 }
 
+// Diagnóstico de resolução: manda uma vez para o servidor o que o navegador vê.
+// Aparece em `balena logs <uuid> --service web` com o prefixo [diag].
+function reportarTela() {
+  const dados = {
+    screen: [screen.width, screen.height],
+    disponivel: [screen.availWidth, screen.availHeight],
+    janela: [window.innerWidth, window.innerHeight],
+    documento: [document.documentElement.clientWidth, document.documentElement.clientHeight],
+    dpr: window.devicePixelRatio,
+    zoomVisual: window.visualViewport ? window.visualViewport.scale : null
+  };
+  fetch('/diag/tela', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dados)
+  }).catch(() => {});
+}
+
 fetchDashboardData();
 setInterval(fetchDashboardData, 5000);
+reportarTela();

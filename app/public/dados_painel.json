@@ -106,24 +106,63 @@
       ]
     }
   ],
-  "graficos": {
-    "fluxo_operacional": {
+  "graficos": [
+    {
       "titulo_grafico": "FLUXO OPERACIONAL DIÁRIO",
-      "labels": ["08h", "10h", "12h", "14h", "16h", "18h", "20h"],
-      "chamados_resolvidos": [2, 5, 8, 10, 6, 4, 1],
-      "chamados_abertos": [3, 7, 12, 10, 8, 5, 2]
+      "tipo_grafico": "line",
+      "parametros_grafico": {
+        "labels": ["08h", "10h", "12h", "14h", "16h", "18h", "20h"],
+        "series": [
+          { "label": "Chamados em Aberto", "valores": [3, 7, 12, 10, 8, 5, 2] },
+          { "label": "Chamados Resolvidos", "valores": [2, 5, 8, 10, 6, 4, 1] }
+        ]
+      }
     },
-    "distribuicao_chamados": {
+    {
       "titulo_grafico": "DISTRIBUIÇÃO DE CHAMADOS",
-      "labels": ["Chamados em Aberto", "Chamados Resolvidos", "Chamados Pendentes"],
-      "valores": [10, 10, 5]
+      "tipo_grafico": "doughnut",
+      "parametros_grafico": {
+        "labels": ["Chamados em Aberto", "Chamados Resolvidos", "Chamados Pendentes"],
+        "valores": [10, 10, 5]
+      }
     },
-    "analise_por_loja": {
+    {
       "titulo_grafico": "ANÁLISE DE CHAMADOS POR LOJA",
-      "labels": ["LASA", "ATACADAO", "COOP", "CARREFOUR", "ROLDAO", "MAMBO", "PANVEL", "SAVEGNAGO", "LOJAS G."],
-      "total_os": [15, 12, 8, 14, 6, 5, 9, 7, 11],
-      "resolvidos": [10, 8, 6, 10, 4, 3, 7, 5, 8],
-      "pendentes": [5, 4, 2, 4, 2, 2, 2, 2, 3]
+      "tipo_grafico": "bar",
+      "parametros_grafico": {
+        "labels": ["LASA", "ATACADAO", "COOP", "CARREFOUR", "ROLDAO", "MAMBO", "PANVEL", "SAVEGNAGO", "LOJAS G."],
+        "series": [
+          { "label": "Total O.S.", "valores": [15, 12, 8, 14, 6, 5, 9, 7, 11] },
+          { "label": "Resolvidos", "valores": [10, 8, 6, 10, 4, 3, 7, 5, 8] },
+          { "label": "Pendentes", "valores": [5, 4, 2, 4, 2, 2, 2, 2, 3] }
+        ]
+      }
     }
-  }
+  ],
+  "insights": [
+    {
+      "tipo": "alerta",
+      "titulo": "SLA abaixo da meta",
+      "descricao": "O SLA de atendimento está em 50%, abaixo do ideal. Recomenda-se priorizar os chamados de prioridade ALTA em aberto.",
+      "cor": "#DE302B"
+    },
+    {
+      "tipo": "tendencia",
+      "titulo": "Pico de chamados às 12h",
+      "descricao": "O maior volume de chamados em aberto no dia ocorre por volta das 12h, com queda gradual até o fim da tarde.",
+      "cor": "#FFB800"
+    },
+    {
+      "tipo": "destaque",
+      "titulo": "LASA lidera em volume de O.S.",
+      "descricao": "A loja LASA concentra o maior número de chamados abertos no período, seguida por CARREFOUR e ATACADAO.",
+      "cor": "#005C9E"
+    },
+    {
+      "tipo": "positivo",
+      "titulo": "MAMBO com menor volume pendente",
+      "descricao": "A loja MAMBO apresenta o menor número de chamados pendentes entre as redes monitoradas, indicando bom ritmo de resolução.",
+      "cor": "#10B981"
+    }
+  ]
 }

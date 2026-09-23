@@ -5,6 +5,11 @@ services:
     build: .
     restart: always
     network_mode: host
+    # JSON recebido do hub (srv-pve) persiste aqui entre restarts/updates.
+    # HUB_TOKEN, HUB_URL, SEGMENTO e DEVICE_TOKEN são definidos como
+    # variáveis de fleet/dispositivo no balenaCloud.
+    volumes:
+      - dashboard-data:/data
 
   browser:
     image: balenablocks/browser
@@ -16,6 +21,12 @@ services:
       KIOSK: "1"
       SHOW_CURSOR: "0"
       ENABLE_GPU: "1"
-      FLAGS: "--window-size=1920,1080 --disable-translate --disable-features=Translate,TranslateUI --lang=pt-BR --accept-lang=pt-BR,pt,en-US,en --noerrdialogs --disable-session-crashed-bubble --no-first-run --disable-pings --check-for-update-interval=31536000"
+      # EXTRA_FLAGS ACRESCENTA flags; FLAGS SUBSTITUI as padrões do bloco
+      # (incluindo o dimensionamento automático da janela). Sem --window-size,
+      # o bloco detecta a resolução real do painel — evita conteúdo cortado.
+      EXTRA_FLAGS: "--disable-translate --disable-features=Translate,TranslateUI --lang=pt-BR --accept-lang=pt-BR,pt,en-US,en --noerrdialogs --disable-session-crashed-bubble --no-first-run --disable-pings --check-for-update-interval=31536000"
       
   
+
+volumes:
+  dashboard-data:

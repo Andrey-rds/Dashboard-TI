@@ -50,24 +50,32 @@ const pluginDataLabels = {
 // Registra o plugin globalmente
 Chart.register(pluginDataLabels);
 
+// Horário de Brasília — o container roda em UTC
 function atualizarRelogio() {
   const agora = new Date();
-  const horas = String(agora.getHours()).padStart(2, '0');
-  const minutos = String(agora.getMinutes()).padStart(2, '0');
-  const segundos = String(agora.getSeconds()).padStart(2, '0');
-  
-  const dia = String(agora.getDate()).padStart(2, '0');
-  const mes = String(agora.getMonth() + 1).padStart(2, '0');
-  const ano = agora.getFullYear();
+  const fuso = { timeZone: 'America/Sao_Paulo' };
 
   const elHora = document.getElementById('relogio-hora');
   const elData = document.getElementById('relogio-data');
 
-  if (elHora) elHora.textContent = `${horas}:${minutos}:${segundos}`;
-  if (elData) elData.textContent = `${dia}/${mes}/${ano}`;
+  if (elHora) elHora.textContent = agora.toLocaleTimeString('pt-BR', fuso);
+  if (elData) elData.textContent = agora.toLocaleDateString('pt-BR', fuso);
 }
 setInterval(atualizarRelogio, 1000);
 atualizarRelogio();
+
+// Paleta de cores padrão para séries sem correspondência de palavra-chave
+const PALETA_CORES = ['#DE302B', '#005C9E', '#FFB800', '#10B981', '#8B5CF6', '#EC4899'];
+
+// Associa uma cor a uma série com base em palavras-chave do rótulo (mantém a identidade visual original)
+function corParaLabel(label, index) {
+  const l = (label || '').toLowerCase();
+  if (l.includes('abert')) return '#DE302B';
+  if (l.includes('total')) return '#DE302B';
+  if (l.includes('resolv')) return '#005C9E';
+  if (l.includes('pend')) return '#FFB800';
+  return PALETA_CORES[index % PALETA_CORES.length];
+}
 
 async function carregarDadosPainel() {
   try {
@@ -83,58 +91,61 @@ async function carregarDadosPainel() {
       document.getElementById('painel-subtitulo').textContent = dados.painel_subtitulo;
     }
 
-    if (dados.graficos) {
-      renderizarGraficoFluxo(dados.graficos.fluxo_operacional);
-      renderizarGraficoDistribuicao(dados.graficos.distribuicao_chamados);
-      renderizarGraficoAnaliseLoja(dados.graficos.analise_por_loja);
+    if (Array.isArray(dados.graficos)) {
+      renderizarGraficos(dados.graficos);
     }
   } catch (error) {
     console.error('Erro ao consumir o JSON:', error);
   }
 }
 
-function renderizarGraficoFluxo(dadosFluxo) {
+// Distribui cada item do array "graficos" para o gráfico correto, pelo tipo_grafico
+function renderizarGraficos(graficos) {
+  const linhas = graficos.filter(g => g.tipo_grafico === 'line');
+  const roscas = graficos.filter(g => g.tipo_grafico === 'doughnut');
+  const barras = graficos.filter(g => g.tipo_grafico === 'bar');
+
+  // FLUXO OPERACIONAL DIÁRIO -> primeiro gráfico de linha
+  if (linhas[0]) renderizarGraficoFluxo(linhas[0]);
+
+  // DISTRIBUIÇÃO DE CHAMADOS -> primeiro gráfico de rosca
+  if (roscas[0]) renderizarGraficoDistribuicao(roscas[0]);
+
+  // ANÁLISE DE CHAMADOS POR LOJA -> primeiro gráfico de barras
+  if (barras[0]) renderizarGraficoAnaliseLoja(barras[0]);
+}
+
+function renderizarGraficoFluxo(grafico) {
+  const params = grafico.parametros_grafico || {};
   const elTitulo = document.getElementById('titulo-fluxo');
-  if (elTitulo && dadosFluxo.titulo_grafico) elTitulo.textContent = dadosFluxo.titulo_grafico;
+  if (elTitulo && grafico.titulo_grafico) elTitulo.textContent = grafico.titulo_grafico;
 
   const ctxFluxo = document.getElementById('chartFluxo').getContext('2d');
-  
-  const gradAbertos = ctxFluxo.createLinearGradient(0, 0, 0, 200);
-  gradAbertos.addColorStop(0, 'rgba(222, 48, 43, 0.35)');
-  gradAbertos.addColorStop(1, 'rgba(222, 48, 43, 0.0)');
 
-  const gradResolvidos = ctxFluxo.createLinearGradient(0, 0, 0, 200);
-  gradResolvidos.addColorStop(0, 'rgba(0, 92, 158, 0.35)');
-  gradResolvidos.addColorStop(1, 'rgba(0, 92, 158, 0.0)');
+  const datasets = (params.series || []).map((serie, index) => {
+    const cor = corParaLabel(serie.label, index);
+    const grad = ctxFluxo.createLinearGradient(0, 0, 0, 200);
+    grad.addColorStop(0, hexParaRgba(cor, 0.35));
+    grad.addColorStop(1, hexParaRgba(cor, 0.0));
+
+    return {
+      label: serie.label,
+      data: serie.valores,
+      borderColor: cor,
+      backgroundColor: grad,
+      borderWidth: 2.5,
+      fill: true,
+      tension: 0.4,
+      pointRadius: 4,
+      pointBackgroundColor: cor
+    };
+  });
 
   new Chart(ctxFluxo, {
     type: 'line',
     data: {
-      labels: dadosFluxo.labels,
-      datasets: [
-        {
-          label: 'Chamados em Aberto',
-          data: dadosFluxo.chamados_abertos,
-          borderColor: '#DE302B',
-          backgroundColor: gradAbertos,
-          borderWidth: 2.5,
-          fill: true,
-          tension: 0.4,
-          pointRadius: 4,
-          pointBackgroundColor: '#DE302B'
-        },
-        {
-          label: 'Chamados Resolvidos',
-          data: dadosFluxo.chamados_resolvidos,
-          borderColor: '#005C9E',
-          backgroundColor: gradResolvidos,
-          borderWidth: 2.5,
-          fill: true,
-          tension: 0.4,
-          pointRadius: 4,
-          pointBackgroundColor: '#005C9E'
-        }
-      ]
+      labels: params.labels || [],
+      datasets
     },
     options: {
       responsive: true,
@@ -154,18 +165,22 @@ function renderizarGraficoFluxo(dadosFluxo) {
   });
 }
 
-function renderizarGraficoDistribuicao(dadosDistribuicao) {
+function renderizarGraficoDistribuicao(grafico) {
+  const params = grafico.parametros_grafico || {};
   const elTitulo = document.getElementById('titulo-distribuicao');
-  if (elTitulo && dadosDistribuicao.titulo_grafico) elTitulo.textContent = dadosDistribuicao.titulo_grafico;
+  if (elTitulo && grafico.titulo_grafico) elTitulo.textContent = grafico.titulo_grafico;
+
+  const labels = params.labels || [];
+  const cores = labels.map((label, index) => corParaLabel(label, index));
 
   const ctxCanal = document.getElementById('chartCanal').getContext('2d');
   new Chart(ctxCanal, {
     type: 'doughnut',
     data: {
-      labels: dadosDistribuicao.labels,
+      labels,
       datasets: [{
-        data: dadosDistribuicao.valores,
-        backgroundColor: ['#DE302B', '#005C9E', '#FFB800'],
+        data: params.valores || [],
+        backgroundColor: cores,
         borderWidth: 2,
         borderColor: '#131927'
       }]
@@ -184,39 +199,43 @@ function renderizarGraficoDistribuicao(dadosDistribuicao) {
   });
 }
 
-function renderizarGraficoAnaliseLoja(dadosLoja) {
+function renderizarGraficoAnaliseLoja(grafico) {
+  const params = grafico.parametros_grafico || {};
   const elTitulo = document.getElementById('titulo-loja');
-  if (elTitulo && dadosLoja.titulo_grafico) elTitulo.textContent = dadosLoja.titulo_grafico;
+  if (elTitulo && grafico.titulo_grafico) elTitulo.textContent = grafico.titulo_grafico;
 
   const ctxRendimento = document.getElementById('chartRendimento').getContext('2d');
+
+  const datasets = (params.series || []).map((serie, index) => {
+    const cor = corParaLabel(serie.label, index);
+    const ehTotal = (serie.label || '').toLowerCase().includes('total');
+
+    if (ehTotal) {
+      return {
+        type: 'line',
+        label: serie.label,
+        data: serie.valores,
+        borderColor: cor,
+        borderWidth: 2,
+        pointRadius: 4,
+        pointBackgroundColor: cor,
+        fill: false
+      };
+    }
+
+    return {
+      label: serie.label,
+      data: serie.valores,
+      backgroundColor: cor,
+      borderRadius: 2
+    };
+  });
+
   new Chart(ctxRendimento, {
     type: 'bar',
     data: {
-      labels: dadosLoja.labels,
-      datasets: [
-        {
-          type: 'line',
-          label: 'Total O.S.',
-          data: dadosLoja.total_os,
-          borderColor: '#DE302B',
-          borderWidth: 2,
-          pointRadius: 4,
-          pointBackgroundColor: '#DE302B',
-          fill: false
-        },
-        {
-          label: 'Resolvidos',
-          data: dadosLoja.resolvidos,
-          backgroundColor: '#005C9E',
-          borderRadius: 2
-        },
-        {
-          label: 'Pendentes / Em Aberto',
-          data: dadosLoja.pendentes,
-          backgroundColor: '#FFB800',
-          borderRadius: 2
-        }
-      ]
+      labels: params.labels || [],
+      datasets
     },
     options: {
       responsive: true,
@@ -234,6 +253,15 @@ function renderizarGraficoAnaliseLoja(dadosLoja) {
       }
     }
   });
+}
+
+// Converte cor hexadecimal (#RRGGBB) para rgba(), usado nos gradientes
+function hexParaRgba(hex, alpha) {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.substring(0, 2), 16);
+  const g = parseInt(h.substring(2, 4), 16);
+  const b = parseInt(h.substring(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 document.addEventListener('DOMContentLoaded', carregarDadosPainel);
